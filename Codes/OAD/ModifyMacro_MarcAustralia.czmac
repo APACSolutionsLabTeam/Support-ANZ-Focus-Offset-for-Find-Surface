@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Script>
+  <Context>Zen26</Context>
+  <Version>1.0</Version>
+  <Language>Python</Language>
+  <Text>import sys
+from System.IO import File, Path, Directory
+
+macroName =  sys.argv[0]     # macro
+#expName =    sys.argv[1]      # experiment
+#plateName =  sys.argv[2]
+"""
+print "This is the name of the script: ", sys.argv[0]
+print "Number of arguments: ", len(sys.argv)
+print "The arguments are: " , str(sys.argv)
+"""
+expName='T001Experiment1'
+doc = Zen.Application.Environment.GetFolderPath(ZenSpecialFolder.UserDocuments)
+ePath = Path.Combine(doc,'Experiment Setups')
+expFile = Path.Combine(ePath,expName + '.czexp')
+if (File.Exists(expFile) == False):
+    print 'False:', 'Experiment - File not found'
+
+exp = ZenExperiment()
+exp.Load(expName,ZenSettingDirectory.User)
+Zen.Acquisition.Experiments.ActiveExperiment = exp
+
+focstrat=expName[1] + expName[2] + expName[3]
+print(focstrat)
+
+if (focstrat=='001'):
+    ## Focus Strategy: 20x 0.95 magnification: Change to 20x/0.95 Objective 1.0x Mag Changer Find Surface SWAF Store Focus
+    Zen.Acquisition.FindSurface()# initial Find Focus
+    Zen.Devices.ObjectiveChanger.TargetPosition = 3
+    Zen.Devices.ObjectiveChanger.Apply()
+    Zen.Devices.Optovar.TargetPosition = 2
+    Zen.Devices.Optovar.Apply()
+    ##Zen.Application.Wait(15000)
+    ##find focus-position and initialize DF
+    Zen.Acquisition.FindSurface()
+    SWAF_exp = Zen.Acquisition.Experiments.ActiveExperiment    
+    Zen.Acquisition.FindAutofocus(SWAF_exp)
+    
+    Var=10 # Desired offset in um. 10um given here.
+    Zact=Zen.Devices.Focus.ActualPosition 
+    Zen.Devices.Focus.MoveTo(     # Move to the new offset
+    
+    Zen.Acquisition.StoreFocus()
+if (focstrat=='002'):
+    ## Focus Strategy: 10x/0.95 magnification: Change to 20x/0.95 Objective 0.5x Mag Changer Find Surface SWAF Store Focus
+    Zen.Acquisition.FindSurface()# initial Find Focus
+    Zen.Devices.ObjectiveChanger.TargetPosition = 3
+    Zen.Devices.ObjectiveChanger.Apply()
+    Zen.Devices.Optovar.TargetPosition = 3
+    Zen.Devices.Optovar.Apply()
+    #Zen.Application.Wait(15000)
+    ##find focus-position and initialize DF
+    Zen.Acquisition.FindSurface()
+    SWAF_exp = Zen.Acquisition.Experiments.ActiveExperiment
+    Zen.Acquisition.FindAutofocus(SWAF_exp)
+    Zen.Acquisition.StoreFocus()
+if (focstrat=='003'):
+    ## Focus Strategy: 20x/0.7 magnification: Change to 20x/0.7 Objective 1.0x Mag Changer Find Surface SWAF Store Focus
+    Zen.Acquisition.FindSurface()# initial Find Focus
+    Zen.Devices.ObjectiveChanger.TargetPosition = 1
+    Zen.Devices.ObjectiveChanger.Apply()
+    Zen.Devices.Optovar.TargetPosition = 2
+    Zen.Devices.Optovar.Apply()
+    #Zen.Application.Wait(15000)
+    ##find focus-position and initialize DF
+    Zen.Acquisition.FindSurface()
+    SWAF_exp = Zen.Acquisition.Experiments.ActiveExperiment
+    Zen.Acquisition.FindAutofocus(SWAF_exp)
+    Zen.Acquisition.StoreFocus()
+if (focstrat=='004'):
+    ## Focus Strategy: 10x/0.7 magnification: Change to 20x/0.7 Objective 0.5x Mag Changer Find Surface SWAF Store Focus
+    Zen.Acquisition.FindSurface()# initial Find Focus
+    Zen.Devices.ObjectiveChanger.TargetPosition = 1
+    Zen.Devices.ObjectiveChanger.Apply()
+    Zen.Devices.Optovar.TargetPosition = 3
+    Zen.Devices.Optovar.Apply()
+    #Zen.Application.Wait(15000)
+    ##find focus-position and initialize DF
+    Zen.Acquisition.FindSurface()
+    SWAF_exp = Zen.Acquisition.Experiments.ActiveExperiment
+    Zen.Acquisition.FindAutofocus(SWAF_exp)
+    Zen.Acquisition.StoreFocus()
+if (focstrat=='005'):
+    ## Example: Change to 5x/0.35 Objective 1.0x Mag Changer Find Surface Store Focus
+    Zen.Acquisition.FindSurface()# initial Find Focus
+    Zen.Devices.ObjectiveChanger.TargetPosition = 1
+    Zen.Devices.ObjectiveChanger.Apply()
+    Zen.Devices.Optovar.TargetPosition = 2
+    Zen.Devices.Optovar.Apply()
+    ##Zen.Application.Wait(15000)
+    ##find focus-position and initialize DF
+    
+    Zen.Acquisition.FindSurface()# Need to modify here!
+    #Zen.Devices.Focus.ActualPosition
+    #Zen.Devices.Focus.TargetPosition
+    #Zen.Devices.Focus.MoveTo()
+    Zen.Acquisition.StoreFocus()
+    
+    
+if (focstrat== '006'):
+    ## Example for David for 6 well plates focus on B3 10x/0.7: Change to 20x/0.7 Objective with 0.5x Mag Changer. Go to defined XY position. Find Surface, SWAF, Store Focus
+    Zen.Acquisition.FindSurface()# initial Find Focus
+    Zen.Devices.ObjectiveChanger.TargetPosition = 1
+    Zen.Devices.ObjectiveChanger.Apply()
+    Zen.Devices.Optovar.TargetPosition = 3
+    Zen.Devices.Optovar.Apply()
+    ## GoTo Position Well B3 for 6 well plate
+    Zen.Devices.Stage.TargetPositionY = 59620
+    Zen.Devices.Stage.TargetPositionX = 93240
+    Zen.Devices.Stage.Apply()
+    Zen.Application.Wait(1000)
+    ##find focus-position and initialize DF
+    Zen.Acquisition.FindSurface()
+    SWAF_exp = Zen.Acquisition.Experiments.ActiveExperiment
+    Zen.Acquisition.FindAutofocus(SWAF_exp)
+    Zen.Acquisition.StoreFocus()
+if (focstrat== '007'):
+    ## Example: Find Surface DF and Store focus. No objective change
+    Zen.Acquisition.FindSurface()# initial Find Focus
+    Zen.Acquisition.StoreFocus()# Store Focus
+if (focstrat== '008'):
+    ## Example: Find Surface DF with SWAF. Store Focus. No Objective change
+    Zen.Acquisition.FindSurface()
+    SWAF_exp = Zen.Acquisition.Experiments.ActiveExperiment
+    Zen.Acquisition.FindAutofocus(SWAF_exp)
+    Zen.Acquisition.StoreFocus()
+####################################################################################################################
+## Execute experiment
+image = Zen.Acquisition.Execute(exp)
+##
+## Define destination folder (barcode)
+myPath = 'D:\\image_automation\\AutoSave\\'
+dPath = Path.Combine(myPath,plateName)
+## check, if directory exists and create directory
+if Directory.Exists(dPath) == False:
+    Directory.CreateDirectory(dPath)
+##
+## define path and filename
+imgName = plateName + '_' + expName + '_' + image.Name
+PathAndFile = Path.Combine(dPath,imgName)
+##
+## save image
+image.Save(PathAndFile)
+## close image
+Zen.Application.Documents.RemoveAll(False)
+image.Close()
+##
+## only for testing to prevent disk overflow
+#File.Delete(PathAndFile)
+##
+
+"""
+except Exception,e:
+    print 'False:', e
+    sys.exit()
+"""
+print 'True'
+</Text>
+  <Author></Author>
+  <Description></Description>
+  <Keywords></Keywords>
+  <Row>41</Row>
+  <Column>35</Column>
+  <WatchVariables>
+    <Watch>doc</Watch>
+    <Watch>expFile</Watch>
+  </WatchVariables>
+</Script>
